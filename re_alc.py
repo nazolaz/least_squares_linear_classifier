@@ -9,7 +9,7 @@ def pinvEcuacionesNormales(X, L, Y):
 
     n, p = X.shape
     rangoX = min(n, p)
-    Lt = traspuesta(L)zz
+    Lt = traspuesta(L)
 
     if rangoX == p and rangoX < n:
 
@@ -17,7 +17,7 @@ def pinvEcuacionesNormales(X, L, Y):
         
         for i in range(n):
         
-            y_i = sustitucionHaciaDelante(L, X[i]) # iesima columna de X traspuesta
+            y_i = sustitucionHaciaDelante(L, X[i]) 
             u_i = sustitucionHaciaAtras(Lt, y_i)
             Utraspuesta[i] = u_i
 
@@ -31,7 +31,7 @@ def pinvEcuacionesNormales(X, L, Y):
         Xtraspuesta = traspuesta(X)
 
         for i in range(p):
-            y_i = sustitucionHaciaDelante(L, Xtraspuesta[i]) # iesima columna de X
+            y_i = sustitucionHaciaDelante(L, Xtraspuesta[i]) 
             V[i] = sustitucionHaciaAtras(Lt, y_i)
 
         W = productoMatricial(Y, V)
@@ -92,21 +92,3 @@ def qrFCN(Q, R, Y):
         V[i] = sustitucionHaciaAtras(R, b)
 
     return productoMatricial(Y,  V)
-
-
-    
-def esPseudoInversa(X, pX, tol= 1e-8):
-    """
-    Devuelve True si pX es la pseudoinversa de X bajo los criterios de Moore-Penrose y la tolerancia 'tol'
-    """
-    X_pX = productoMatricial(X, pX)
-    pX_X = productoMatricial(pX, X)
-
-    condicion1 = matricesIguales(X, productoMatricial(X,pX_X), tol)
-    condicion2 = matricesIguales(pX, productoMatricial(pX_X,pX), tol)
-    condicion3 = esSimetrica(X_pX, tol)
-    condicion4 = esSimetrica(pX_X, tol)
-
-    return condicion1 & condicion2 & condicion3 & condicion4
-
-
