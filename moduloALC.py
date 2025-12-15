@@ -169,13 +169,13 @@ def calculaLDV(A):
     if(U is None):
         return None, None, None, 0
 
-    Vt, D, nops2 = calculaLU(traspuesta(U))
+    Vt, D, nops2 = calculaLU(U.T)
 
 
     if Vt is None:
         return None, None, None, 0
     
-    return L, D, traspuesta(Vt), nops1 + nops2
+    return L, D, Vt.T, nops1 + nops2
 
 def esSDP(A, atol=1e-10):
     """
@@ -273,7 +273,7 @@ def QR_con_GS(A, tol=1e-12, retorna_nops=False):
             q_k = Q[:, k]
             R[k][j] = productoInterno(q_k, qMoño_j)
             nops += 2*m- 1
-            qMoño_j = restaVectorial(qMoño_j, productoEscalar(q_k, R[k][j]))
+            qMoño_j = qMoño_j - (q_k * R[k][j])
             nops += 2*m
         
         R[j][j] = norma(qMoño_j, 2)
@@ -281,7 +281,7 @@ def QR_con_GS(A, tol=1e-12, retorna_nops=False):
 
         if R[j][j] > tol:
 
-            Q[:, j] = productoEscalar(qMoño_j, 1/R[j][j])
+            Q[:, j] = qMoño_j * 1/R[j][j]
             nops += 1
         else:
             Q[:, j] = qMoño_j
@@ -373,9 +373,9 @@ def diagRH(A, tol=1e-15, K=1000):
     """
     n = len(A)
     v1, l1, _ = metpot2k(A, tol, K)
-    resta = normalizarVector(restaVectorial(colCanonico(n,0), v1),2)
-    producto = productoExterno(resta, resta)  
-    Hv1 = restaMatricial(nIdentidad(n), productoEscalar(producto, 2))
+    resta = normalizarVector((colCanonico(n,0) - v1),2)
+    producto = np.outer(resta, resta)  
+    Hv1 = nIdentidad(n) - (producto * 2)
     mid = Hv1@(A@(Hv1.T))
 
     if n == 2:
@@ -413,7 +413,7 @@ def svd_reducida(A, k="max", tol=1e-15):
     # chequeo de dimension para optimizar
     usar_traspuesta = False
     if m < n:
-        A = traspuesta(A)
+        A = A.T
         usar_traspuesta = True
 
     m, n = A.shape

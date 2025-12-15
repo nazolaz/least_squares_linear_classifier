@@ -7,66 +7,18 @@ def calcularAx(A, x):
     """
     Calcula el producto matriz-vector con los parametros A y x
     """
-    x = np.array(x).flatten()
-
-    res = np.zeros(A.shape[0])  
+    x_flat = np.asarray(x).flatten()
+    res = (A @ x_flat).astype(float)
     
-    for i, row in enumerate(A):
-        for j, value in enumerate(row):
-            res[i] += value * x[j]
-    return np.array(res).reshape((-1,1))
+    return res.reshape(-1, 1)
 
-def normaInf(A):
-    """
-    Calcula la norma infinito de la matriz A
-    """
-
-    sumatorias = []
-    for i, row in enumerate(A):
-        sumatorias.append(sum(abs(row)))
-    
-    return max(sumatorias)
 
 def esSimetrica(A, tol = 1e-8): 
     """
     Devuelve True si la matriz A es simetrica bajo la tolerancia 'tol'
     """
-
-    for i, row in enumerate(A):
-        for j in range(len(row)):
-            if alc.error(A[i][j], A[j][i]) > tol:
-                return False
             
-    return True
-
-
-
-def productoExterno(u, v):
-    """
-    Calcula el producto de u^t con v 
-    """
-
-    n = u.shape[0]
-    res = np.zeros((n, n))
-    for i, ui in enumerate(u):
-        if ui[0] != 0:
-            for j, vj in enumerate(v):
-                res[i][j] = ui[0] * vj
-    return res
-
-
-def matricesIguales(A, B, atol = 1e-8):
-    """
-    Devuelve True si las matrices A y B son iguales indice a indice bajo la tolerancia 'atol'
-    """
-
-    if A.size != B.size and A[0].size != B[0].size:
-        return False
-    for i, fila in enumerate(A):
-        for j, valor in enumerate(fila):
-           if alc.error(np.float64(valor), np.float64(B[i][j])) > atol:
-                return False
-    return True
+    return np.allclose(A, A.T, tol)
 
 
 def filaCanonica(dimension, i):
@@ -98,29 +50,6 @@ def normalizarVector(vector, p):
     
     return np.array(vector) / normaVector
 
-def traspuesta(A):
-    """
-    Calcula la matriz traspuesta de A 
-    """
-
-    if (len(A) == 0):
-        return A
-
-    elif (isinstance(A[0], Iterable)):
-        A = np.array(A)
-        m, n = A.shape
-        res = np.zeros((n, m))
-        for i, row in enumerate(A):
-            for j, value in enumerate(row):
-                res[j][i] = A[i][j]
-
-
-    else:
-        res = np.zeros((len(A),1))
-        for i, value in enumerate(A):
-            res[i][0] = value 
-    
-    return res
 
 def triangSup(A):
     """
@@ -170,21 +99,6 @@ def productoInterno(u, v):
     
     return subtotal
 
-def productoEscalar(A, k):
-    """
-    Devuelve el producto escalar de la matriz A con la constante k 
-    """
-    return np.array(A) * k
-
-
-def restaMatricial(A, B):
-    """
-    Devuelve el resultado de la resta matricial entre A y B
-    """
-    res = A.copy()
-    for i in range(len(A)):
-        res[i] = restaVectorial(A[i],B[i])
-    return res
 
 def extenderConIdentidad(A, p): #solo para matrices cuadradas
     """
@@ -199,12 +113,6 @@ def extenderConIdentidad(A, p): #solo para matrices cuadradas
             res[i][j] = A[k][l]
     return res
 
-def restaVectorial(u, v):
-    """
-    Devuelve la resta vectorial entre u y v
-    """
-
-    return u - v
 
 def nIdentidad(n):
     """
