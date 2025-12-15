@@ -1,5 +1,4 @@
-from moduloALC import *
-from moduloALCaux import *
+from least_squares_linear_classifier.linalg import *
 import numpy as np
 
 def pinvEcuacionesNormales(X, L, Y):
