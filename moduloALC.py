@@ -150,7 +150,7 @@ def inversa(A):
         for j in range(n):
             Uinv[j][i] = colInv[j]
 
-    return productoMatricial(Uinv, Linv)
+    return Uinv@Linv
 
 def calculaLDV(A):
     """
@@ -330,12 +330,12 @@ def QR_con_HH(A, tol=1e-12):
         v = u / norma(u, 2)
         v_fila = v.reshape(1, -1)
 
-        valor_intermedio = productoMatricial(v_fila, R[k:, k:]).flatten()
+        valor_intermedio = (v_fila@R[k:, k:]).flatten()
         R[k:, k:] -= 2 * np.outer(v, valor_intermedio)
         v_columna = v.reshape(-1, 1)
         
         # Qv (m, n-k) x (n-k, n-k)
-        valor_intermedio_Q = productoMatricial(Q[:, k:], v_columna).flatten()
+        valor_intermedio_Q = (Q[:, k:]@v_columna).flatten()
         
         # Q = Q - 2 Qv * v^t
         Q[:, k:] -= 2 * np.outer(valor_intermedio_Q, v)
@@ -376,7 +376,7 @@ def diagRH(A, tol=1e-15, K=1000):
     resta = normalizarVector(restaVectorial(colCanonico(n,0), v1),2)
     producto = productoExterno(resta, resta)  
     Hv1 = restaMatricial(nIdentidad(n), productoEscalar(producto, 2))
-    mid = productoMatricial(Hv1,productoMatricial(A,traspuesta(Hv1)))
+    mid = Hv1@(A@(Hv1.T))
 
     if n == 2:
         return Hv1, mid
@@ -387,7 +387,7 @@ def diagRH(A, tol=1e-15, K=1000):
     D = extenderConIdentidad(Dmoño, n)
     D[0][0] = l1
 
-    S = productoMatricial(Hv1, extenderConIdentidad(Smoño, n))
+    S = Hv1@extenderConIdentidad(Smoño, n)
 
     return S, D
 
@@ -418,7 +418,7 @@ def svd_reducida(A, k="max", tol=1e-15):
 
     m, n = A.shape
 
-    AtA = productoMatricial(traspuesta(A), A)
+    AtA = (A.T)@ A
     VHat_full, SigmaHat = diagRH(AtA, tol=tol, K=10000)
 
     # calculo de rango
@@ -434,7 +434,7 @@ def svd_reducida(A, k="max", tol=1e-15):
     VHat_k = VHat_full[:, :k]
     SigmaHatVector = vectorValoresSingulares(SigmaHat, k)
 
-    B = productoMatricial(A, VHat_k)
+    B = A@VHat_k
     UHat_k = B
     for j in range(k): # type: ignore
         sigma = SigmaHatVector[j]

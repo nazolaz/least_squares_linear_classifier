@@ -21,7 +21,7 @@ def pinvEcuacionesNormales(X, L, Y):
             u_i = sustitucionHaciaAtras(Lt, y_i)
             Utraspuesta[i] = u_i
 
-        W = productoMatricial(Y, Utraspuesta.T)
+        W = Y@(Utraspuesta.T)
 
 
     elif rangoX == n and rangoX < p:
@@ -32,12 +32,12 @@ def pinvEcuacionesNormales(X, L, Y):
             y_i = sustitucionHaciaDelante(L, X.T[i]) 
             V[i] = sustitucionHaciaAtras(Lt, y_i)
 
-        W = productoMatricial(Y, V)
+        W = Y@V
 
 
     elif rangoX == p and p == n:
         Xinv = inversa(X)
-        W = productoMatricial(Y, Xinv)
+        W = Y@Xinv
 
     return W
 
@@ -53,9 +53,9 @@ def pinvSVD(U, S, V, Y):
     for i in range(len(Sr)):
         S_inv_diag[i,i] = 1.0 / Sr[i]
     
-    X_plus = productoMatricial(Vr, productoMatricial(S_inv_diag, Ur.T))
+    X_plus = Vr@(S_inv_diag@Ur.T)
     
-    W = productoMatricial(Y, X_plus)
+    W = Y@X_plus
     
     return W
 
@@ -89,4 +89,4 @@ def qrFCN(Q, R, Y):
         b = Q[i] # esto es equivalente a conseguirColumna(traspuesta(Q))
         V[i] = sustitucionHaciaAtras(R, b)
 
-    return productoMatricial(Y,  V)
+    return Y@V

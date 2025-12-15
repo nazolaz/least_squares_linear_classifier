@@ -40,22 +40,6 @@ def esSimetrica(A, tol = 1e-8):
     return True
 
 
-def productoMatricial(A, B): # A es nxp, B es pxm
-    """
-    Calcula el producto matricial entre A y B
-    """
-
-    n = A.shape[0]
-    p, m = B.shape
-    
-    res = np.zeros((n, m))
-    
-    for i in range(n):
-        for j in range(m):
-            res[i][j] = np.sum(A[i] * B[:, j])
-            
-    return res
-
 
 def productoExterno(u, v):
     """
@@ -259,10 +243,7 @@ def calculaCholesky(A):
     for i in range(len(D)): # type: ignore
         D[i][i] = np.sqrt(D[i][i]) # type: ignore
 
-    Lmoño = productoMatricial(L, D)
-
-    return Lmoño
-
+    return L@D
 
 
 def reducirSVD(U, S, V):
