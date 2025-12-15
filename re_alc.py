@@ -9,7 +9,7 @@ def pinvEcuacionesNormales(X, L, Y):
 
     n, p = X.shape
     rangoX = min(n, p)
-    Lt = traspuesta(L)
+    Lt = L.T
 
     if rangoX == p and rangoX < n:
 
@@ -21,17 +21,15 @@ def pinvEcuacionesNormales(X, L, Y):
             u_i = sustitucionHaciaAtras(Lt, y_i)
             Utraspuesta[i] = u_i
 
-        U = traspuesta(Utraspuesta)
-        W = productoMatricial(Y, U)
+        W = productoMatricial(Y, Utraspuesta.T)
 
 
     elif rangoX == n and rangoX < p:
 
         V = np.zeros((p,n))
-        Xtraspuesta = traspuesta(X)
 
         for i in range(p):
-            y_i = sustitucionHaciaDelante(L, Xtraspuesta[i]) 
+            y_i = sustitucionHaciaDelante(L, X.T[i]) 
             V[i] = sustitucionHaciaAtras(Lt, y_i)
 
         W = productoMatricial(Y, V)
@@ -55,7 +53,7 @@ def pinvSVD(U, S, V, Y):
     for i in range(len(Sr)):
         S_inv_diag[i,i] = 1.0 / Sr[i]
     
-    X_plus = productoMatricial(Vr, productoMatricial(S_inv_diag, traspuesta(Ur)))
+    X_plus = productoMatricial(Vr, productoMatricial(S_inv_diag, Ur.T))
     
     W = productoMatricial(Y, X_plus)
     
