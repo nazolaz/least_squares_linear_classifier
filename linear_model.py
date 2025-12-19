@@ -1,6 +1,15 @@
 from linalg import *
 import numpy as np
 
+def fit(X, Y, method = 'RH', tol = 1e-15):
+    match method:
+        case 'RH' | 'GS':
+            return fit_qr(X, Y, method, tol) 
+        case 'Cholesky':
+            return fit_cholesky(X, Y)
+        case 'SVD':
+            return fit_svd(X, Y, tol)
+
 def fit_cholesky(X, Y):
     """
     Devuelve la matriz de pesos W utilizando la matriz L de la decomposicion de Cholesky e Y, la matriz de targets

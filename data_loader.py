@@ -1,13 +1,13 @@
 import numpy as np
 from pathlib import Path
 
-def load_dataset(root_path, extension="*.npy"):
+def load_dataset(root_path):
     """
     Carga dataset.
     Asume que los archivos .npy tienen formato (Filas=Muestras).
     """
     root = Path(root_path)
-    classes = sorted([classFolder.name for classFolder in root.iterdir()])
+    classes = sorted([classFolder.name for classFolder in root.iterdir() if classFolder.is_dir()])
     
     list_data = []
     list_tags = []
@@ -27,7 +27,7 @@ def load_dataset(root_path, extension="*.npy"):
     X = np.hstack(list_data)
     Y = one_hot_encoding(np.concatenate(list_tags))
 
-    return X, Y, classes
+    return X, Y
 
 def one_hot_encoding(tags):
     """
