@@ -12,7 +12,7 @@ def filaCanonica(dimension, i):
     fila[i] = 1
     return fila
 
-def colCanonico(dimension, i):
+def colCanonica(dimension, i):
     """
     Devuelve el vector canonico 'i' del espacio vectorial respectivo de 'dimension' en forma de vector columna
     """
@@ -64,7 +64,6 @@ def normaliza(Xs, p):
         XsNormalizado.append(res)
 
     return XsNormalizado
-
 
 def signo(n):
     if n > 0:
@@ -416,7 +415,7 @@ def diagRH(A, tol=1e-15, K=1000):
     """
     n = len(A)
     v1, l1, _ = metpot2k(A, tol, K)
-    resta = normalizarVector((colCanonico(n,0) - v1),2)
+    resta = normalizarVector((colCanonica(n,0) - v1),2)
     producto = np.outer(resta, resta)  
     Hv1 = np.eye(n) - (producto * 2)
     mid = Hv1@(A@(Hv1.T))
