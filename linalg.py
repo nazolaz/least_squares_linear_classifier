@@ -153,16 +153,15 @@ def sustitucionHaciaAtras(A, b):
     m, n = A.shape
     valoresX = np.zeros(n)
 
-    for i in range( min(A.shape) -1, -1, -1):
+    for i in range(min(m, n) - 1, -1, -1):
         cocienteActual = A[i][i]
-        sumatoria = 0
-        for k in range(i + 1, n):
-            sumatoria += A[i][k] * valoresX[k]
 
         if cocienteActual == 0:
-            valoresX[i] = np.nan  
+            valoresX[i] = np.nan
         else:
+            sumatoria = np.dot(A[i, i+1:], valoresX[i+1:])
             valoresX[i] = (b[i] - sumatoria) / cocienteActual
+
     return valoresX
 
 def sustitucionHaciaDelante(A, b):
@@ -170,14 +169,18 @@ def sustitucionHaciaDelante(A, b):
     Resuelve el sistema lineal Ax = b donde A es triangular inferior.
     Retorna el vector solución x.
     """
-    valoresX = []
-    for i, row in enumerate(A):
-        cocienteActual = row[i]
-        sumatoria = 0
-        for k in range(i):
-            sumatoria += A[i][k] * valoresX[k]
-        valoresX.append((b[i] - sumatoria)/cocienteActual)
-    return np.array(valoresX)
+    m, n = A.shape
+    valoresX = np.zeros(n)
+
+    for i in range(min(m, n)):
+        cocienteActual = A[i][i]
+        
+        if cocienteActual == 0:
+            valoresX[i] = np.nan
+        else:
+            sumatoria = np.dot(A[i, :i], valoresX[:i])
+            valoresX[i] = (b[i] - sumatoria) / cocienteActual
+    return valoresX
 
 def res_tri(L, b, inferior=True):
     """
