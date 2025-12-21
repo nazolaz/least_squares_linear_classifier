@@ -27,7 +27,7 @@ def load_dataset(root_path):
     X = np.hstack(list_data)
     Y = one_hot_encoding(np.concatenate(list_tags))
 
-    return X, Y
+    return X, Y, classes
 
 def one_hot_encoding(tags):
     """

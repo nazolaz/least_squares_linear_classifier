@@ -44,7 +44,7 @@ def fit_cholesky(X, Y):
 
 
     elif rangoX == p and p == n:
-        Xinv = inversa(X)
+        Xinv = inversaLU(X)
         W = Y @ Xinv
 
     return W

@@ -220,7 +220,7 @@ def calculaLU(A):
     
     return triangL(Ac), triangSup(Ac), cant_op
 
-def inversa(A):
+def inversaLU(A):
     """
     Calcula la inversa de A usando descomposición LU.
     """
