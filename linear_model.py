@@ -72,7 +72,7 @@ def fit_qr(X, Y, qr_method = 'RH', tol = 1e-15):
     """
 
     #despejamos V haciendo R * V.T = Q.T
-    Q, R = calculaQR(X, qr_method, tol)
+    Q, R = calculaQR(X.T, qr_method, tol)
 
     m_r, n_r = R.shape # shape R (2000, 1536)
     m_p, n_p = Q.shape # shape Q (2000, 2000)
