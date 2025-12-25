@@ -206,12 +206,11 @@ def calculaLU(A):
         if A[k][k] == 0:
             return None, None, 0
         
-        for i in range(k + 1, n):
-            
-            mi = Ac[i][k]/Ac[k][k]
-            Ac[i][k] = mi
+        for i in range(k + 1, m):
+            quotient = Ac[i][k]/Ac[k][k]
+            Ac[i][k] = quotient
             for j in range(k+1, m):
-                Ac[i][j] = Ac[i][j] - mi * Ac[k][j]
+                Ac[i][j] = Ac[i][j] - quotient * Ac[k][j]
 
     return triangL(Ac), triangSup(Ac)
 
