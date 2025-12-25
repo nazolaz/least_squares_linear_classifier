@@ -12,7 +12,7 @@ def predict(W, X, load_from_file=True):
         W = np.load(W)
 
     y_score = W @ X
-    return np.argmax(y_score, axis=0)g
+    return np.argmax(y_score, axis=0)
 
 
-W = train('cats_and_dogs/train', './W.CHOLE')
+W = train('cats_and_dogs/train', './W.Cholesky', 'Cholesky')

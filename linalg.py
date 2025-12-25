@@ -115,13 +115,9 @@ def extenderConIdentidad(A, p): #solo para matrices cuadradas
     """
     Devuelve la matriz A extendida hacia arriba a la izquierda con 1s en la diagonal
     """
-    res = np.eye(p)
     n = A.shape[0]
-    for i in range(p - n, p):
-        k = i - (p - n)
-        for j in range(p - n, p):
-            l = j - (p - n)
-            res[i][j] = A[k][l]
+    res = np.eye(p)
+    res[p-n:, p-n:] = A
     return res
 
 def submatriz(A, l, k):
@@ -199,27 +195,24 @@ def calculaLU(A):
     """
     Calcula la descomposición LU de la matriz A sin pivoteo.
     """
-    cant_op = 0
     m, n = A.shape
     Ac = A.copy()
     
     if m!=n:
         return None, None, 0
 
-    for k in range(0, n-1):
+    for k in tqdm(range(0, n-1)):
         if A[k][k] == 0:
             return None, None, 0
         
         for i in range(k + 1, n):
             
             mi = Ac[i][k]/Ac[k][k]
-            cant_op += 1
             Ac[i][k] = mi
             for j in range(k+1, m):
                 Ac[i][j] = Ac[i][j] - mi * Ac[k][j]
-                cant_op += 2 
-    
-    return triangL(Ac), triangSup(Ac), cant_op
+
+    return triangL(Ac), triangSup(Ac)
 
 def inversaLU(A):
     """
@@ -292,8 +285,8 @@ def calculaCholesky(A):
 
     L, D, _, _ = calculaLDV(A)
 
-    for i in range(len(D)): # type: ignore
-        D[i][i] = np.sqrt(D[i][i]) # type: ignore
+    for i in tqdm(range(len(D))): 
+        D[i][i] = np.sqrt(D[i][i]) 
 
     return L@D
 
@@ -363,7 +356,7 @@ def QR_con_HH(A, tol=1e-12):
     if m < n:
         return None, None
 
-    for k in tqdm(range(min(m,n))):
+    for k in range(min(m,n)):
         
         # x es el vector columna actual desde la diagonal hacia abajo
         x = R[k:, k]
