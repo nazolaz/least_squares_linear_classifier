@@ -201,6 +201,7 @@ def calculaLU(A):
     if m!=n:
         return None, None, 0
 
+    print("tqdm LU")
     for k in tqdm(range(0, n-1)):
         if A[k][k] == 0:
             return None, None, 0
@@ -247,17 +248,17 @@ def calculaLDV(A):
     """
     Calcula la descomposición L D V^T.
     """
-    L, U, nops1 = calculaLU(A)
+    L, U = calculaLU(A)
 
     if(U is None):
         return None, None, None, 0
 
-    Vt, D, nops2 = calculaLU(U.T)
+    Vt, D = calculaLU(U.T)
 
     if Vt is None:
         return None, None, None, 0
     
-    return L, D, Vt.T, nops1 + nops2
+    return L, D, Vt.T
 
 def esSDP(A, atol=1e-10):
     """
@@ -295,19 +296,17 @@ def calculaCholesky(A):
 # 4. ORTOGONALIZACION Y QR
 # ==========================================
 
-def QR_con_GS(A, tol=1e-12, retorna_nops=False):
+def QR_con_GS(A, tol=1e-12):
     """
     Calcula la factorización QR mediante el proceso de Gram-Schmidt.
     """
     m , n = A.shape
     Q = np.zeros((m,n))
     R = np.zeros((n,n))
-    nops = 0
 
     a_1 = A[:, 0]
     norma1 = norma(a_1, 2)
     R[0][0] = norma1
-    nops += 2*m - 1
 
     if norma1 > tol:
         Q[:, 0] = normalizarVector(a_1, 2)
@@ -320,22 +319,15 @@ def QR_con_GS(A, tol=1e-12, retorna_nops=False):
         for k in range(0, j):
             q_k = Q[:, k]
             R[k][j] = np.vdot(q_k, qMoño_j)
-            nops += 2*m- 1
             qMoño_j = qMoño_j - (q_k * R[k][j])
-            nops += 2*m
         
         R[j][j] = norma(qMoño_j, 2)
-        nops += 2*m - 1
 
         if R[j][j] > tol:
 
             Q[:, j] = qMoño_j * 1/R[j][j]
-            nops += 1
         else:
             Q[:, j] = qMoño_j
-
-    if (retorna_nops):
-        return Q, R, nops
 
     return Q, R
 
