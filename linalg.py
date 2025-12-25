@@ -265,7 +265,7 @@ def esSDP(A, atol=1e-10):
     if(not (esSimetrica(A, atol))):
         return False
     
-    L, D, Lt, _ = calculaLDV(A)
+    L, D, Lt = calculaLDV(A)
 
     if( D is None):
         return False
@@ -282,7 +282,7 @@ def calculaCholesky(A):
     if not esSDP(A):
         return None
 
-    L, D, _, _ = calculaLDV(A)
+    L, D, _ = calculaLDV(A)
 
     for i in tqdm(range(len(D))): 
         D[i][i] = np.sqrt(D[i][i]) 
