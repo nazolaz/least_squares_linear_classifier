@@ -12,8 +12,7 @@ def predict(W, X, load_from_file=True):
         W = np.load(W)
 
     y_score = W @ X
-    return np.argmax(y_score, axis=0)
+    return np.argmax(y_score, axis=0)g
 
-#train('cats_and_dogs/train', './W_model.npy')
 
-W = np.load('cats_and_dogs/train/cats/efficientnet_b3_embeddings.npy')
+W = train('cats_and_dogs/train', './W.CHOLE')

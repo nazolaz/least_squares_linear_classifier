@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 
 # ==========================================
 # 1. AUXILIARES
@@ -355,14 +356,14 @@ def QR_con_HH(A, tol=1e-12):
     # H A = A - 2 * v (v^tA)
 
     m, n = A.shape
-    
+    print(A.shape)
     R = A.copy()
     Q = np.eye(m)
 
     if m < n:
         return None, None
 
-    for k in range(min(m,n)):
+    for k in tqdm(range(min(m,n))):
         
         # x es el vector columna actual desde la diagonal hacia abajo
         x = R[k:, k]

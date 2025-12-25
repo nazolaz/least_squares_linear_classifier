@@ -1,4 +1,5 @@
 from linalg import *
+from tqdm import tqdm
 import numpy as np
 
 def fit(X, Y, method = 'RH', tol = 1e-15):
@@ -80,7 +81,7 @@ def fit_qr(X, Y, qr_method = 'RH', tol = 1e-15):
     V = np.zeros((m_p, n_r)) # shape V.T (1536, 2000) -> shape V (2000, 1536) 
  
     
-    for i in range(m_p):
+    for i in tqdm(range(m_p)):
         b = Q[i] # esto es equivalente a conseguirColumna(traspuesta(Q))
         V[i] = sustitucionHaciaAtras(R, b)
 
