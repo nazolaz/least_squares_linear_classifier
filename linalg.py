@@ -202,7 +202,7 @@ def calculaLU(A):
         return None, None, 0
 
     print("tqdm LU")
-    for k in tqdm(range(0, n-1)):
+    for k in range(0, n-1):
         if Ac[k][k] == 0:
             return None, None, 0
         
@@ -284,7 +284,7 @@ def calculaCholesky(A):
 
     L, D, _ = calculaLDV(A)
 
-    for i in tqdm(range(len(D))): 
+    for i in range(len(D)): 
         D[i][i] = np.sqrt(D[i][i]) 
 
     return L@D
