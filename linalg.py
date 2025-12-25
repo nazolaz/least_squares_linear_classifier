@@ -203,14 +203,13 @@ def calculaLU(A):
 
     print("tqdm LU")
     for k in tqdm(range(0, n-1)):
-        if A[k][k] == 0:
+        if Ac[k][k] == 0:
             return None, None, 0
         
         for i in range(k + 1, m):
-            quotient = Ac[i][k]/Ac[k][k]
-            Ac[i][k] = quotient
-            for j in range(k+1, n):
-                Ac[i][j] = Ac[i][j] - quotient * Ac[k][j]
+            quotient = Ac[i][k]/Ac[k][k]    # Ac[i][k] es el iesimo elemento debajo del pivote que luego pasa a ser 0
+            Ac[i][k] = quotient             # se guarda en Ac[i][k] el cociente para la eliminacion de gauss
+            Ac[i, k+1 : n] = Ac[i, k+1 : n] - quotient * Ac[k, k+1 : n]
 
     return triangL(Ac), triangSup(Ac)
 
