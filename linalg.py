@@ -377,7 +377,7 @@ def QR_con_HH(A, tol=1e-12):
 
     return Q, R
 
-def calculaQR(A, metodo='RH', tol=1e-12, nops=False):
+def calculaQR(A, metodo='RH', tol=1e-12):
     """
     Calcula la descomposición QR de A.
     """
@@ -385,10 +385,7 @@ def calculaQR(A, metodo='RH', tol=1e-12, nops=False):
         return QR_con_HH(A, tol)
     
     elif metodo == 'GS':
-        if nops:
-            return QR_con_GS(A, tol, True)
-        else:
-            return QR_con_GS(A, tol)
+        return QR_con_GS(A, tol)
     
     else: 
         return None, None, None
