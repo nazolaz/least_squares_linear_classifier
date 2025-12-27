@@ -201,7 +201,6 @@ def calculaLU(A):
     if m!=n:
         return None, None, 0
 
-    print("tqdm LU")
     for k in range(0, n-1):
         if Ac[k][k] == 0:
             return None, None, 0
@@ -392,20 +391,23 @@ def calculaQR(A, metodo='RH', tol=1e-12):
 # ==========================================
 # 5. SVD Y DIAGONALIZACION
 # ==========================================
-
-def diagRH(A, tol=1e-15, K=100):
-    """
-    Calcula autovalores y autovectores de una matriz simétrica mediante deflación de Householder.
-    """
+def diagRH(A, tol=1e-15, K=1000):
     n = len(A)
+
     v1, l1, _ = metpot2k(A, tol, K)
-    resta = normalizarVector((colCanonica(n,0) - v1),2)
-    producto = np.outer(resta, resta)  
-    Hv1 = np.eye(n) - (producto * 2)
-    mid = Hv1@(A@(Hv1.T))
+    u = normalizarVector((colCanonica(n,0) - v1),2).flatten()
+    print(u.shape)
+    Au = A @ u
+    uAu = np.dot(u, Au)
+    q = Au - uAu * u
+    W = np.outer(q, u)
+    
+    mid = A - 2 * (W + W.T)
 
     if n == 2:
-        return Hv1, mid
+        uut = np.outer(u, u)
+        Anew = np.eye(n) - 2 * uut
+        return Anew, mid
     
     Amoño = submatriz(mid, 2, n)
     Smoño, Dmoño = diagRH(Amoño, tol, K)
@@ -413,7 +415,8 @@ def diagRH(A, tol=1e-15, K=100):
     D = extenderConIdentidad(Dmoño, n)
     D[0][0] = l1
 
-    S = Hv1@extenderConIdentidad(Smoño, n)
+    Smoño_ext = extenderConIdentidad(Smoño, n)
+    S = Smoño_ext - 2 * np.outer(u, u @ Smoño_ext)
 
     return S, D
 
@@ -469,8 +472,7 @@ def svd_reducida(A, k="max", tol=1e-15):
 
     B = A@VHat_k
     UHat_k = B
-    print("SVD loop")
-    for j in tqdm(range(k)): 
+    for j in range(k): 
         sigma = SigmaHatVector[j]
         UHat_k[:, j] /= sigma
 
