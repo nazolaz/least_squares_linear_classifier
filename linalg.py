@@ -198,11 +198,11 @@ def calculaLU(A):
     Ac = A.copy()
     
     if m!=n:
-        return None, None, 0
+        return None, None
 
     for k in range(0, n-1):
         if Ac[k][k] == 0:
-            return None, None, 0
+            return None, None
         
         for i in range(k + 1, m):
             quotient = Ac[i][k]/Ac[k][k]    # Ac[i][k] es el iesimo elemento debajo del pivote que luego pasa a ser 0
@@ -247,12 +247,12 @@ def calculaLDV(A):
     L, U = calculaLU(A)
 
     if(U is None):
-        return None, None, None, 0
+        return None, None, None
 
     Vt, D = calculaLU(U.T)
 
     if Vt is None:
-        return None, None, None, 0
+        return None, None, None
     
     return L, D, Vt.T
 
@@ -389,7 +389,7 @@ def calculaQR(A, metodo='HH', tol=1e-10):
 # ==========================================
 # 5. SVD Y DIAGONALIZACION
 # ==========================================
-def diagRH(A, tol=1e-10, K=100, iteracion = 0):
+def diagRH(A, tol=1e-10, K=100):
     n = len(A)
 
     v1, l1, _ = metpot2k(A, tol, K)
@@ -407,7 +407,7 @@ def diagRH(A, tol=1e-10, K=100, iteracion = 0):
         return Anew, mid
     
     Amoño = submatriz(mid, 2, n)
-    Smoño, Dmoño = diagRH(Amoño, tol, K, iteracion + 1)
+    Smoño, Dmoño = diagRH(Amoño, tol, K)
 
     D = extenderConIdentidad(Dmoño, n)
     D[0][0] = l1
@@ -508,7 +508,7 @@ def f_A(A, v):
     if norma(wprima, 2) > 0:
         return normalizarVector(wprima, 2) 
 
-    return 0
+    return np.zeros_like(wprima)
 
 def metpot2k(A, tol=1e-10, K=100.0):
     """

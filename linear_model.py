@@ -23,7 +23,6 @@ def fit_cholesky(X, Y):
         Utraspuesta = np.zeros((n,p))
         
         for i in range(n):
-        
             y_i = sustitucionHaciaDelante(L, X[i]) 
             u_i = sustitucionHaciaAtras(L.T, y_i)
             Utraspuesta[i] = u_i
@@ -79,7 +78,6 @@ def fit_qr(X, Y, qr_method = 'HH', tol = 1e-10):
 
     V = np.zeros((m_p, n_r)) # shape V.T (1536, 2000) -> shape V (2000, 1536) 
  
-    
     for i in range(m_p):
         b = Q[i] # esto es equivalente a conseguirColumna(traspuesta(Q))
         V[i] = sustitucionHaciaAtras(R, b)
