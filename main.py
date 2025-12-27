@@ -14,4 +14,4 @@ def predict(W_file, X):
     return np.argmax(y_score, axis=0)
 
 
-W = train('cats_and_dogs/train', './W.SVD', 'SVD')
+W = train('cats_and_dogs/train', './W.SVD_permisive', 'SVD')

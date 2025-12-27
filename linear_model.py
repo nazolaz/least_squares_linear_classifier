@@ -1,8 +1,7 @@
 from linalg import *
-from tqdm import tqdm
 import numpy as np
 
-def fit(X, Y, method = 'RH', tol = 1e-15):
+def fit(X, Y, method = 'RH', tol = 1e-10):
     match method:
         case 'RH' | 'GS':
             return fit_qr(X, Y, method, tol) 
@@ -51,13 +50,12 @@ def fit_cholesky(X, Y):
     return W
 
 
-def fit_svd(X, Y, tol = 1e-15):
+def fit_svd(X, Y, tol = 1e-10):
     """
     Devuelve la matriz de pesos W utilizando las matrices U (unitaria) y S (diagonal) de la decomposicion SVD e Y, la matriz de targets
     """
 
     Ur, Sr, Vr = svd_reducida(X, tol = tol)
-    print("termino svd_reducida")
 
     S_inv_diag = np.zeros((len(Sr), len(Sr)))
     for i in range(len(Sr)):
@@ -68,7 +66,7 @@ def fit_svd(X, Y, tol = 1e-15):
     return Y @ X_plus
 
 
-def fit_qr(X, Y, qr_method = 'RH', tol = 1e-15):
+def fit_qr(X, Y, qr_method = 'RH', tol = 1e-10):
     """
     Devuelve la matriz de pesos W utilizando las matrices de la descomposicion QR e Y, la matriz de targets
     """

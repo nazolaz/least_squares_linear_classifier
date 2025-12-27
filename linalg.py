@@ -1,5 +1,4 @@
 import numpy as np
-from tqdm import tqdm
 
 # ==========================================
 # 1. AUXILIARES
@@ -132,7 +131,7 @@ def conseguirColumnaSufijo(A, j, k):
     """
     return A[k:A.shape[1], j]
 
-def esSimetrica(A, tol = 1e-8): 
+def esSimetrica(A, tol = 1e-10): 
     """
     Devuelve True si la matriz A es simetrica bajo la tolerancia 'tol'
     """
@@ -293,7 +292,7 @@ def calculaCholesky(A):
 # 4. ORTOGONALIZACION Y QR
 # ==========================================
 
-def QR_con_GS(A, tol=1e-12):
+def QR_con_GS(A, tol=1e-10):
     """
     Calcula la factorización QR mediante el proceso de Gram-Schmidt.
     """
@@ -328,7 +327,7 @@ def QR_con_GS(A, tol=1e-12):
 
     return Q, R
 
-def QR_con_HH(A, tol=1e-12):
+def QR_con_HH(A, tol=1e-10):
     """
     Calcula la factorización QR mediante reflexiones de Householder.
     """
@@ -338,7 +337,6 @@ def QR_con_HH(A, tol=1e-12):
     # H A = A - 2 * v (v^tA)
 
     m, n = A.shape
-    print(A.shape)
     R = A.copy()
     Q = np.eye(m)
 
@@ -374,7 +372,7 @@ def QR_con_HH(A, tol=1e-12):
 
     return Q, R
 
-def calculaQR(A, metodo='RH', tol=1e-12):
+def calculaQR(A, metodo='RH', tol=1e-10):
     """
     Calcula la descomposición QR de A.
     """
@@ -391,7 +389,7 @@ def calculaQR(A, metodo='RH', tol=1e-12):
 # ==========================================
 # 5. SVD Y DIAGONALIZACION
 # ==========================================
-def diagRH(A, tol=1e-15, K=100):
+def diagRH(A, tol=1e-10, K=100, iteracion = 0):
     n = len(A)
 
     v1, l1, _ = metpot2k(A, tol, K)
@@ -409,7 +407,7 @@ def diagRH(A, tol=1e-15, K=100):
         return Anew, mid
     
     Amoño = submatriz(mid, 2, n)
-    Smoño, Dmoño = diagRH(Amoño, tol, K)
+    Smoño, Dmoño = diagRH(Amoño, tol, K, iteracion + 1)
 
     D = extenderConIdentidad(Dmoño, n)
     D[0][0] = l1
@@ -439,7 +437,7 @@ def vectorValoresSingulares(SigmaHat, k):
             SigmaHatVector.append(np.sqrt(np.abs(SigmaHat[i][i])))
     return SigmaHatVector
 
-def svd_reducida(A, k="max", tol=1e-15):
+def svd_reducida(A, k="max", tol=1e-10):
     """
     Calcula la Descomposición en Valores Singulares (SVD) reducida de A.
     """
@@ -512,7 +510,7 @@ def f_A(A, v):
 
     return 0
 
-def metpot2k(A, tol=1e-15, K=100.0):
+def metpot2k(A, tol=1e-10, K=100.0):
     """
     Calcula el autovalor dominante y su autovector asociado usando el método de la potencia.
     """
@@ -522,10 +520,9 @@ def metpot2k(A, tol=1e-15, K=100.0):
     vmoño = f_A(A, vmoñotemp)
     e = float(np.vdot(vmoño, v))
     k = 0
-    while(abs(e - 1) > tol and k < K):
+    while(1 - abs(e) > tol and k < K):
         v = vmoño
-        vmoñotemp = f_A(A, v)
-        vmoño = f_A(A, vmoñotemp)
+        vmoño = f_A(A, vmoño)
         e = float(np.vdot(vmoño, v))
         k = k + 1
     
