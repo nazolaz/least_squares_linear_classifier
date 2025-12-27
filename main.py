@@ -1,17 +1,22 @@
 import numpy as np
-from data_loader import load_dataset
+from data_managing import load_dataset
 from linear_model import fit
 
-def train(path_train, output_file, method='RH'):
-    X, Y, _  = load_dataset(path_train)
+def train(path_train, output_file, method='HH'):
+    X, Y, classes = load_dataset(path_train)
     W = fit(X, Y, method=method)
-    np.save(output_file, W)
 
-def predict(W_file, X):
-    W = np.load(W_file)
+    np.savez(output_file, W=W, classes=classes)
 
+def predict(model_file, unlabeled_data_path):
+    data = np.load(model_file)
+    W = data['W']
+    classes = data['classes']
+
+    X = np.load(unlabeled_data_path).T
     y_score = W @ X
-    return np.argmax(y_score, axis=0)
+    
+    indexed_classes = np.argmax(y_score, axis=0)    
+    percentages = [(class_name, np.mean(indexed_classes == i) * 100) for i, class_name in enumerate(classes)]
 
-
-W = train('cats_and_dogs/train', './W.SVD_permisive', 'SVD')
+    return classes[indexed_classes], percentages

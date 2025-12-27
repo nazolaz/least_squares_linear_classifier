@@ -1,9 +1,9 @@
 from linalg import *
 import numpy as np
 
-def fit(X, Y, method = 'RH', tol = 1e-10):
+def fit(X, Y, method = 'HH', tol = 1e-10):
     match method:
-        case 'RH' | 'GS':
+        case 'HH' | 'GS':
             return fit_qr(X, Y, method, tol) 
         case 'Cholesky':
             return fit_cholesky(X, Y)
@@ -66,7 +66,7 @@ def fit_svd(X, Y, tol = 1e-10):
     return Y @ X_plus
 
 
-def fit_qr(X, Y, qr_method = 'RH', tol = 1e-10):
+def fit_qr(X, Y, qr_method = 'HH', tol = 1e-10):
     """
     Devuelve la matriz de pesos W utilizando las matrices de la descomposicion QR e Y, la matriz de targets
     """
