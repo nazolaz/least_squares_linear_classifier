@@ -391,12 +391,11 @@ def calculaQR(A, metodo='RH', tol=1e-12):
 # ==========================================
 # 5. SVD Y DIAGONALIZACION
 # ==========================================
-def diagRH(A, tol=1e-15, K=1000):
+def diagRH(A, tol=1e-15, K=100):
     n = len(A)
 
     v1, l1, _ = metpot2k(A, tol, K)
     u = normalizarVector((colCanonica(n,0) - v1),2).flatten()
-    print(u.shape)
     Au = A @ u
     uAu = np.dot(u, Au)
     q = Au - uAu * u
