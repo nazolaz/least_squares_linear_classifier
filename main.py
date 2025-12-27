@@ -7,12 +7,11 @@ def train(path_train, output_file, method='RH'):
     W = fit(X, Y, method=method)
     np.save(output_file, W)
 
-def predict(W, X, load_from_file=True):
-    if load_from_file:
-        W = np.load(W)
+def predict(W_file, X):
+    W = np.load(W_file)
 
     y_score = W @ X
     return np.argmax(y_score, axis=0)
 
 
-W = train('cats_and_dogs/train', './W.Cholesky', 'Cholesky')
+W = train('cats_and_dogs/train', './W.SVD', 'SVD')

@@ -393,7 +393,7 @@ def calculaQR(A, metodo='RH', tol=1e-12):
 # 5. SVD Y DIAGONALIZACION
 # ==========================================
 
-def diagRH(A, tol=1e-15, K=1000):
+def diagRH(A, tol=1e-15, K=100):
     """
     Calcula autovalores y autovectores de una matriz simétrica mediante deflación de Householder.
     """
@@ -452,7 +452,7 @@ def svd_reducida(A, k="max", tol=1e-15):
     m, n = A.shape
 
     AtA = (A.T)@ A
-    VHat_full, SigmaHat = diagRH(AtA, tol=tol, K=10000)
+    VHat_full, SigmaHat = diagRH(AtA, tol=tol, K=100)
 
     # calculo de rango
     rango=min(m, n)
@@ -469,10 +469,11 @@ def svd_reducida(A, k="max", tol=1e-15):
 
     B = A@VHat_k
     UHat_k = B
-    for j in range(k): # type: ignore
+    print("SVD loop")
+    for j in tqdm(range(k)): 
         sigma = SigmaHatVector[j]
-        for fila in range(m):
-            UHat_k[fila][j] = UHat_k[fila][j] / sigma
+        UHat_k[:, j] /= sigma
+
     if usar_traspuesta:
         return VHat_k, SigmaHatVector, UHat_k
     else:
@@ -510,9 +511,9 @@ def f_A(A, v):
 
     return 0
 
-def metpot2k(A, tol=1e-15, K=1000.0):
+def metpot2k(A, tol=1e-15, K=100.0):
     """
-    Calcula el autovalor dominante y su autovector asociado usando el Método de la Potencia.
+    Calcula el autovalor dominante y su autovector asociado usando el método de la potencia.
     """
     n = len(A[0])
     v = np.random.rand(n,1)
@@ -520,8 +521,7 @@ def metpot2k(A, tol=1e-15, K=1000.0):
     vmoño = f_A(A, vmoñotemp)
     e = float(np.vdot(vmoño, v))
     k = 0
-    while( abs(e - 1) > tol and k < K):
-
+    while(abs(e - 1) > tol and k < K):
         v = vmoño
         vmoñotemp = f_A(A, v)
         vmoño = f_A(A, vmoñotemp)
