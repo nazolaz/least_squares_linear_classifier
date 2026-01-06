@@ -5,9 +5,6 @@ from linear_model import fit
 def train(path_train, output_file, method='SVD'):
     X, Y, classes = load_dataset(path_train)
 
-    ones = np.ones((1, X.shape[1]))
-    X = np.vstack([X, ones])
-
     W = fit(X, Y, method=method)
     np.savez(output_file, W=W, classes=classes)
 
@@ -17,8 +14,6 @@ def predict(model_file, unlabeled_data_path):
     classes = data['classes']
 
     X = np.load(unlabeled_data_path).T
-    ones = np.ones((1, X.shape[1]))
-    X = np.vstack([X, ones])
     y_score = W @ X
     
     indexed_classes = np.argmax(y_score, axis=0)    
