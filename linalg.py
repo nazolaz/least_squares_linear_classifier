@@ -1,10 +1,10 @@
 import numpy as np
 
 # ==========================================
-# 1. AUXILIARES
+# 1. AUX
 # ==========================================
 
-def filaCanonica(dimension, i):
+def get_canonical_row(dimension, i):
     """
     Devuelve el vector canonico 'i' del espacio vectorial respectivo de 'dimension' en forma de vector fila
     """
@@ -12,7 +12,7 @@ def filaCanonica(dimension, i):
     fila[i] = 1
     return fila
 
-def colCanonica(dimension, i):
+def get_canonical_col(dimension, i):
     """
     Devuelve el vector canonico 'i' del espacio vectorial respectivo de 'dimension' en forma de vector columna
     """
@@ -20,7 +20,7 @@ def colCanonica(dimension, i):
     columna[i][0] = 1
     return columna
 
-def norma(Xs, p):
+def computer_norm(Xs, p):
     """
     Calcula la norma vectorial p de un vector Xs.
     
@@ -36,18 +36,18 @@ def norma(Xs, p):
     res = np.sum(np.abs(Xs) ** p)
     return res**(1/p)
 
-def normalizarVector(vector, p):
+def normalize_vector(vector, p):
     """
     Devuelve el vector pasado como parametro normalizado en norma p
     """
-    normaVector = norma(vector, p)
+    normaVector = computer_norm(vector, p)
     
     if normaVector == 0:
         return vector 
     
     return np.array(vector) / normaVector
 
-def normaliza(Xs, p):
+def normalize_vector_list(Xs, p):
     """
     Normaliza una lista de vectores según la norma p indicada.
     
@@ -60,12 +60,12 @@ def normaliza(Xs, p):
     XsNormalizado = []
 
     for vector in Xs:
-        res = normalizarVector(vector, p)
+        res = normalize_vector(vector, p)
         XsNormalizado.append(res)
 
     return XsNormalizado
 
-def signo(n):
+def get_sign(n):
     if n > 0:
         return 1
     elif n < 0:
@@ -73,7 +73,7 @@ def signo(n):
     else:
         return 0
 
-def calcularAx(A, x):
+def compute_Ax(A, x):
     """
     Calcula el producto matriz-vector con los parametros A y x
     """
@@ -82,7 +82,7 @@ def calcularAx(A, x):
     
     return res.reshape(-1, 1)
 
-def triangSup(A):
+def get_upper_triangular(A):
     """
     Devuelve la matriz A pero con 0s debajo de la diagonal
     """
@@ -95,7 +95,7 @@ def triangSup(A):
     
     return ATriangSup
 
-def triangL(A):
+def get_lower_triangular(A):
     """
     Devuelve la matriz A pero con 0s sobre la diagonal y reescribiendo la diagonal con 1s
     """
@@ -110,7 +110,7 @@ def triangL(A):
     
     return L
 
-def extenderConIdentidad(A, p): #solo para matrices cuadradas
+def extend_with_identity(A, p): #solo para matrices cuadradas
     """
     Devuelve la matriz A extendida hacia arriba a la izquierda con 1s en la diagonal
     """
@@ -119,29 +119,29 @@ def extenderConIdentidad(A, p): #solo para matrices cuadradas
     res[p-n:, p-n:] = A
     return res
 
-def submatriz(A, l, k):
+def get_submatrix(A, l, k):
     """
     Recorta la matriz A desde A[l][l] hasta A[k][k]
     """
     return A[l-1:k, l-1:k]
 
-def conseguirColumnaSufijo(A, j, k):
+def get_column_suffix(A, j, k):
     """
     Extrae la columna j de la matriz A, pero solo considerando de los indices k para adelante
     """
     return A[k:A.shape[1], j]
 
-def esSimetrica(A, tol = 1e-10): 
+def is_symmetric(A, tol = 1e-10): 
     """
     Devuelve True si la matriz A es simetrica bajo la tolerancia 'tol'
     """
     return np.allclose(A, A.T, tol)
 
 # ==========================================
-# 3. RESOLVEDORES DE SISTEMAS TRIANGULARES
+# 3. TRIANGULAR SOLVERS
 # ==========================================
 
-def sustitucionHaciaAtras(A, b):
+def backward_substitution(A, b):
     """
     Resuelve el sistema lineal Ax = b donde A es triangular superior.
     Retorna el vector solución x.
@@ -160,7 +160,7 @@ def sustitucionHaciaAtras(A, b):
 
     return valoresX
 
-def sustitucionHaciaDelante(A, b):
+def forward_substitution(A, b):
     """
     Resuelve el sistema lineal Ax = b donde A es triangular inferior.
     Retorna el vector solución x.
@@ -178,19 +178,19 @@ def sustitucionHaciaDelante(A, b):
             valoresX[i] = (b[i] - sumatoria) / cocienteActual
     return valoresX
 
-def res_tri(L, b, inferior=True):
+def solve_triangular(L, b, inferior=True):
     """
     Wrapper para resolver sistemas triangulares.
     """
     if(inferior):
-        return sustitucionHaciaDelante(L,b)
-    return sustitucionHaciaAtras(L,b)
+        return forward_substitution(L,b)
+    return backward_substitution(L,b)
 
 # ==========================================
-# 3. CHOLESKY Y LU
+# 3. CHOLESKY & LU
 # ==========================================
 
-def calculaLU(A):
+def compute_LU(A):
     """
     Calcula la descomposición LU de la matriz A sin pivoteo.
     """
@@ -209,15 +209,15 @@ def calculaLU(A):
             Ac[i][k] = quotient             # se guarda en Ac[i][k] el cociente para la eliminacion de gauss
             Ac[i, k+1 : n] = Ac[i, k+1 : n] - quotient * Ac[k, k+1 : n]
 
-    return triangL(Ac), triangSup(Ac)
+    return get_lower_triangular(Ac), get_upper_triangular(Ac)
 
-def inversaLU(A):
+def invert_LU(A):
     """
     Calcula la inversa de A usando descomposición LU.
     """
     n = A.shape[0]
 
-    L,U,_ = calculaLU(A)
+    L,U,_ = compute_LU(A)
 
     if (L is None or U is None):
         return None    
@@ -226,7 +226,7 @@ def inversaLU(A):
     Uinv = np.zeros((n,n))
 
     for i in range(n):
-        colInv = res_tri(L, filaCanonica(n, i), inferior=True)
+        colInv = solve_triangular(L, get_canonical_row(n, i), inferior=True)
         for j in range(n):
             Linv[j][i] = colInv[j]
 
@@ -234,36 +234,36 @@ def inversaLU(A):
         if( U[i,i] == 0):
             return None
 
-        colInv = res_tri(U, filaCanonica(n, i), inferior=False)
+        colInv = solve_triangular(U, get_canonical_row(n, i), inferior=False)
         for j in range(n):
             Uinv[j][i] = colInv[j]
 
     return Uinv@Linv
 
-def calculaLDV(A):
+def compute_LDV(A):
     """
     Calcula la descomposición L D V^T.
     """
-    L, U = calculaLU(A)
+    L, U = compute_LU(A)
 
     if(U is None):
         return None, None, None
 
-    Vt, D = calculaLU(U.T)
+    Vt, D = compute_LU(U.T)
 
     if Vt is None:
         return None, None, None
     
     return L, D, Vt.T
 
-def esSDP(A, atol=1e-10):
+def is_SPD(A, atol=1e-10):
     """
     Determina si la matriz A es Simétrica Definida Positiva (SDP).
     """
-    if(not (esSimetrica(A, atol))):
+    if(not (is_symmetric(A, atol))):
         return False
     
-    L, D, Lt = calculaLDV(A)
+    L, D, Lt = compute_LDV(A)
 
     if( D is None):
         return False
@@ -273,14 +273,14 @@ def esSDP(A, atol=1e-10):
             return False
     return True
 
-def calculaCholesky(A):
+def compute_cholesky(A):
     """
     Calcula la matriz L de la descomposición de Cholesky
     """
-    if not esSDP(A):
+    if not is_SPD(A):
         return None
 
-    L, D, _ = calculaLDV(A)
+    L, D, _ = compute_LDV(A)
 
     for i in range(len(D)): 
         D[i][i] = np.sqrt(D[i][i]) 
@@ -289,10 +289,10 @@ def calculaCholesky(A):
 
 
 # ==========================================
-# 4. ORTOGONALIZACION Y QR
+# 4. ORTHOGONALIZATION & QR
 # ==========================================
 
-def QR_con_GS(A, tol=1e-10):
+def qr_gram_schmidt(A, tol=1e-10):
     """
     Calcula la factorización QR mediante el proceso de Gram-Schmidt.
     """
@@ -301,11 +301,11 @@ def QR_con_GS(A, tol=1e-10):
     R = np.zeros((n,n))
 
     a_1 = A[:, 0]
-    norma1 = norma(a_1, 2)
+    norma1 = computer_norm(a_1, 2)
     R[0][0] = norma1
 
     if norma1 > tol:
-        Q[:, 0] = normalizarVector(a_1, 2)
+        Q[:, 0] = normalize_vector(a_1, 2)
     else:
         Q[:, 0] = a_1
 
@@ -317,7 +317,7 @@ def QR_con_GS(A, tol=1e-10):
             R[k][j] = np.vdot(q_k, qMoño_j)
             qMoño_j = qMoño_j - (q_k * R[k][j])
         
-        R[j][j] = norma(qMoño_j, 2)
+        R[j][j] = computer_norm(qMoño_j, 2)
 
         if R[j][j] > tol:
 
@@ -327,7 +327,7 @@ def QR_con_GS(A, tol=1e-10):
 
     return Q, R
 
-def QR_con_HH(A, tol=1e-10):
+def qr_householder(A, tol=1e-10):
     """
     Calcula la factorización QR mediante reflexiones de Householder.
     """
@@ -348,16 +348,16 @@ def QR_con_HH(A, tol=1e-10):
         # x es el vector columna actual desde la diagonal hacia abajo
         x = R[k:, k]
         
-        norm_x = norma(x, 2)
+        norm_x = computer_norm(x, 2)
         if norm_x < tol:
             continue
             
-        signo_x = signo(x[0])
+        signo_x = get_sign(x[0])
         # u = x + signo_x * ||x|| * e1
         u = x.copy()
         u[0] += signo_x * norm_x
         
-        v = u / norma(u, 2)
+        v = u / computer_norm(u, 2)
         v_fila = v.reshape(1, -1)
 
         valor_intermedio = (v_fila@R[k:, k:]).flatten()
@@ -372,28 +372,28 @@ def QR_con_HH(A, tol=1e-10):
 
     return Q, R
 
-def calculaQR(A, metodo='HH', tol=1e-10):
+def compute_qr(A, metodo='HH', tol=1e-10):
     """
     Calcula la descomposición QR de A.
     """
     if metodo == 'HH':
-        return QR_con_HH(A, tol)
+        return qr_householder(A, tol)
     
     elif metodo == 'GS':
-        return QR_con_GS(A, tol)
+        return qr_gram_schmidt(A, tol)
     
     else: 
         return None, None, None
 
 
 # ==========================================
-# 5. SVD Y DIAGONALIZACION
+# 5. DIAGONALIZATION & SVD
 # ==========================================
-def diagRH(A, tol=1e-10, K=100):
+def diagonalize_HH(A, tol=1e-10, K=100):
     n = len(A)
 
-    v1, l1, _ = metpot2k(A, tol, K)
-    u = normalizarVector((colCanonica(n,0) - v1),2).flatten()
+    v1, l1, _ = power_method(A, tol, K)
+    u = normalize_vector((get_canonical_col(n,0) - v1),2).flatten()
     Au = A @ u
     uAu = np.dot(u, Au)
     q = Au - uAu * u
@@ -406,18 +406,18 @@ def diagRH(A, tol=1e-10, K=100):
         Anew = np.eye(n) - 2 * uut
         return Anew, mid
     
-    Amoño = submatriz(mid, 2, n)
-    Smoño, Dmoño = diagRH(Amoño, tol, K)
+    Amoño = get_submatrix(mid, 2, n)
+    Smoño, Dmoño = diagonalize_HH(Amoño, tol, K)
 
-    D = extenderConIdentidad(Dmoño, n)
+    D = extend_with_identity(Dmoño, n)
     D[0][0] = l1
 
-    Smoño_ext = extenderConIdentidad(Smoño, n)
+    Smoño_ext = extend_with_identity(Smoño, n)
     S = Smoño_ext - 2 * np.outer(u, u @ Smoño_ext)
 
     return S, D
 
-def vectorValoresSingulares(SigmaHat, k):
+def get_singular_values_vector(SigmaHat, k):
     """
     Extrae y calcula los valores singulares a partir de la matriz diagonal de autovalores.
 
@@ -437,7 +437,7 @@ def vectorValoresSingulares(SigmaHat, k):
             SigmaHatVector.append(np.sqrt(np.abs(SigmaHat[i][i])))
     return SigmaHatVector
 
-def svd_reducida(A, k="max", tol=1e-10):
+def reduced_SVD(A, k="max", tol=1e-10):
     """
     Calcula la Descomposición en Valores Singulares (SVD) reducida de A.
     """
@@ -452,7 +452,7 @@ def svd_reducida(A, k="max", tol=1e-10):
     m, n = A.shape
 
     AtA = (A.T)@ A
-    VHat_full, SigmaHat = diagRH(AtA, tol=tol, K=100)
+    VHat_full, SigmaHat = diagonalize_HH(AtA, tol=tol, K=100)
 
     # calculo de rango
     rango=min(m, n)
@@ -465,7 +465,7 @@ def svd_reducida(A, k="max", tol=1e-10):
 
     # tomamos las primeras k columnas de Vhat y los primeros k valores singulares
     VHat_k = VHat_full[:, :k]
-    SigmaHatVector = vectorValoresSingulares(SigmaHat, k)
+    SigmaHatVector = get_singular_values_vector(SigmaHat, k)
 
     B = A@VHat_k
     UHat_k = B
@@ -478,7 +478,7 @@ def svd_reducida(A, k="max", tol=1e-10):
     else:
         return UHat_k, SigmaHatVector, VHat_k
 
-def reducirSVD(U, S, V):
+def truncate_SVD(U, S, V):
     """
     Calcula la version reducida de la SVD a partir de la version completa
     """
@@ -503,14 +503,14 @@ def reducirSVD(U, S, V):
     return U_red, Slist, V_red
 
 def f_A(A, v):
-    wprima = calcularAx(A, v)
+    wprima = compute_Ax(A, v)
 
-    if norma(wprima, 2) > 0:
-        return normalizarVector(wprima, 2) 
+    if computer_norm(wprima, 2) > 0:
+        return normalize_vector(wprima, 2) 
 
     return np.zeros_like(wprima)
 
-def metpot2k(A, tol=1e-10, K=100.0):
+def power_method(A, tol=1e-10, K=100.0):
     """
     Calcula el autovalor dominante y su autovector asociado usando el método de la potencia.
     """
@@ -526,7 +526,7 @@ def metpot2k(A, tol=1e-10, K=100.0):
         e = float(np.vdot(vmoño, v))
         k = k + 1
     
-    ax = calcularAx(A, vmoño)
+    ax = compute_Ax(A, vmoño)
     autovalor = np.vdot(vmoño, ax)
 
     return vmoño, autovalor, k

@@ -3,8 +3,8 @@ from pathlib import Path
 
 def load_dataset(root_path):
     """
-    Carga dataset.
-    Asume que los archivos .npy tienen formato (Filas=Muestras).
+    Loads the dataset.
+    Assumes that .npy files have the format (Rows=Samples).
     """
     root = Path(root_path)
     classes = sorted([classFolder.name for classFolder in root.iterdir() if classFolder.is_dir()])
@@ -31,9 +31,8 @@ def load_dataset(root_path):
 
 def one_hot_encoding(tags):
     """
-    Convierte vector de etiquetas enteras a matriz One-Hot.
+    Converts a vector of integer labels into a One-Hot matrix.
     """
-
     n_classes = np.max(tags) + 1
     n_samples = len(tags)
     

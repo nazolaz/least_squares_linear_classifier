@@ -19,31 +19,31 @@ def fit_cholesky(X, Y):
     rangoX = min(n, p)
 
     if rangoX == p and rangoX < n:
-        L = calculaCholesky(X.T @ X) 
+        L = compute_cholesky(X.T @ X) 
         Utraspuesta = np.zeros((n,p))
         
         for i in range(n):
-            y_i = sustitucionHaciaDelante(L, X[i]) 
-            u_i = sustitucionHaciaAtras(L.T, y_i)
+            y_i = forward_substitution(L, X[i]) 
+            u_i = backward_substitution(L.T, y_i)
             Utraspuesta[i] = u_i
 
         W = Y @ (Utraspuesta.T)
 
 
     elif rangoX == n and rangoX < p:
-        L = calculaCholesky(X @ X.T) 
+        L = compute_cholesky(X @ X.T) 
 
         V = np.zeros((p,n))
 
         for i in range(p):
-            y_i = sustitucionHaciaDelante(L, X.T[i]) 
-            V[i] = sustitucionHaciaAtras(L.T, y_i)
+            y_i = forward_substitution(L, X.T[i]) 
+            V[i] = backward_substitution(L.T, y_i)
 
         W = Y@V
 
 
     elif rangoX == p and p == n:
-        Xinv = inversaLU(X)
+        Xinv = invert_LU(X)
         W = Y @ Xinv
 
     return W
@@ -54,7 +54,7 @@ def fit_svd(X, Y, tol = 1e-10):
     Devuelve la matriz de pesos W utilizando las matrices U (unitaria) y S (diagonal) de la decomposicion SVD e Y, la matriz de targets
     """
 
-    Ur, Sr, Vr = svd_reducida(X, tol = tol)
+    Ur, Sr, Vr = reduced_SVD(X, tol = tol)
 
     S_inv_diag = np.zeros((len(Sr), len(Sr)))
     for i in range(len(Sr)):
@@ -71,7 +71,7 @@ def fit_qr(X, Y, qr_method = 'HH', tol = 1e-10):
     """
 
     #despejamos V haciendo R * V.T = Q.T
-    Q, R = calculaQR(X.T, qr_method, tol)
+    Q, R = compute_qr(X.T, qr_method, tol)
 
     m_r, n_r = R.shape # shape R (2000, 1536)
     m_p, n_p = Q.shape # shape Q (2000, 2000)
@@ -80,6 +80,6 @@ def fit_qr(X, Y, qr_method = 'HH', tol = 1e-10):
  
     for i in range(m_p):
         b = Q[i] # esto es equivalente a conseguirColumna(traspuesta(Q))
-        V[i] = sustitucionHaciaAtras(R, b)
+        V[i] = backward_substitution(R, b)
 
     return Y @ V
