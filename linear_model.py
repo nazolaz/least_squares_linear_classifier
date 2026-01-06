@@ -1,10 +1,10 @@
 from linalg import *
 import numpy as np
 
-def fit(X, Y, method = 'HH', tol = 1e-10):
+def fit(X, Y, method='HH', tol=1e-10):
     match method:
         case 'HH' | 'GS':
-            return fit_qr(X, Y, method, tol) 
+            return fit_qr(X, Y, method, tol)
         case 'Cholesky':
             return fit_cholesky(X, Y)
         case 'SVD':
@@ -12,74 +12,74 @@ def fit(X, Y, method = 'HH', tol = 1e-10):
 
 def fit_cholesky(X, Y):
     """
-    Devuelve la matriz de pesos W utilizando la matriz L de la decomposicion de Cholesky e Y, la matriz de targets
+    Returns the weight matrix W using the L matrix from Cholesky decomposition and Y, the target matrix.
     """
 
     n, p = X.shape
-    rangoX = min(n, p)
+    rank_X = min(n, p)
 
-    if rangoX == p and rangoX < n:
-        L = compute_cholesky(X.T @ X) 
-        Utraspuesta = np.zeros((n,p))
+    if rank_X == p and rank_X < n:
+        L = compute_cholesky(X.T @ X)
+        U_transpose = np.zeros((n, p))
         
         for i in range(n):
-            y_i = forward_substitution(L, X[i]) 
+            y_i = forward_substitution(L, X[i])
             u_i = backward_substitution(L.T, y_i)
-            Utraspuesta[i] = u_i
+            U_transpose[i] = u_i
 
-        W = Y @ (Utraspuesta.T)
+        W = Y @ (U_transpose.T)
 
 
-    elif rangoX == n and rangoX < p:
-        L = compute_cholesky(X @ X.T) 
+    elif rank_X == n and rank_X < p:
+        L = compute_cholesky(X @ X.T)
 
-        V = np.zeros((p,n))
+        V = np.zeros((p, n))
 
         for i in range(p):
-            y_i = forward_substitution(L, X.T[i]) 
+            y_i = forward_substitution(L, X.T[i])
             V[i] = backward_substitution(L.T, y_i)
 
-        W = Y@V
+        W = Y @ V
 
 
-    elif rangoX == p and p == n:
-        Xinv = invert_LU(X)
-        W = Y @ Xinv
+    elif rank_X == p and p == n:
+        X_inv = invert_LU(X)
+        W = Y @ X_inv
 
     return W
 
 
-def fit_svd(X, Y, tol = 1e-10):
+def fit_svd(X, Y, tol=1e-10):
     """
-    Devuelve la matriz de pesos W utilizando las matrices U (unitaria) y S (diagonal) de la decomposicion SVD e Y, la matriz de targets
+    Returns the weight matrix W using the U (unitary) and S (diagonal) matrices from SVD decomposition and Y, the target matrix.
     """
 
-    Ur, Sr, Vr = reduced_SVD(X, tol = tol)
+    Ur, Sr, Vr = reduced_SVD(X, tol=tol)
 
     S_inv_diag = np.zeros((len(Sr), len(Sr)))
     for i in range(len(Sr)):
-        S_inv_diag[i,i] = 1.0 / Sr[i]
+        S_inv_diag[i, i] = 1.0 / Sr[i]
     
     X_plus = Vr @ (S_inv_diag @ Ur.T)
     
     return Y @ X_plus
 
 
-def fit_qr(X, Y, qr_method = 'HH', tol = 1e-10):
+def fit_qr(X, Y, qr_method='HH', tol=1e-10):
     """
-    Devuelve la matriz de pesos W utilizando las matrices de la descomposicion QR e Y, la matriz de targets
+    Returns the weight matrix W using the QR decomposition matrices and Y, the target matrix.
     """
 
-    #despejamos V haciendo R * V.T = Q.T
+    # We solve for V by doing R * V.T = Q.T
     Q, R = compute_qr(X.T, qr_method, tol)
 
-    m_r, n_r = R.shape # shape R (2000, 1536)
-    m_p, n_p = Q.shape # shape Q (2000, 2000)
+    m_r, n_r = R.shape
+    m_p, n_p = Q.shape
 
-    V = np.zeros((m_p, n_r)) # shape V.T (1536, 2000) -> shape V (2000, 1536) 
+    V = np.zeros((m_p, n_r))
  
     for i in range(m_p):
-        b = Q[i] # esto es equivalente a conseguirColumna(traspuesta(Q))
+        b = Q[i] # this is equivalent to getting the Column of the transpose of Q
         V[i] = backward_substitution(R, b)
 
     return Y @ V
