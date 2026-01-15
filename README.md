@@ -1,10 +1,10 @@
-# Linear Classifier from Scratch
+# Linear classifier from scratch
 
-This project implements a multi-class linear classifier based on algebraic decompositions. It solves the fundamental equation $Wx = y$ to find the optimal weight matrix $W$ that maps input features to categorical targets.
+This project implements a multi-class linear classifier based on algebraic decompositions. It solves the equation $Wx = y$ to find the optimal weight matrix $W$ that maps input features to categorical targets.
 
 ## Mathematical Objective
 
-The goal is to find the weight matrix $W \in \mathbb{R}^{m \times n}$ that minimizes the Mean Squared Error between our predictions ($Wx^{\mu}$) and the desired targets ($y^{\mu}$) across all $p$ training samples:
+The goal is to find the weight matrix $W \in \mathbb{R}^{m \times n}$ that minimizes the Mean squared error between our predictions ($Wx^{\mu}$) and the desired targets ($y^{\mu}$) across all $p$ training samples:
 
 $$E(W) = \frac{1}{p} \sum_{\mu=1}^{p} \|y^{\mu} - Wx^{\mu}\|_2^2$$
 
@@ -13,7 +13,7 @@ In this equation:
 * **$x^{\mu}$** is the input embedding for sample $\mu$.
 * **$y^{\mu}$** is the target vector representing the ground truth class.
 
-We minimize this error by calculating the **Moore-Penrose Pseudoinverse** ($X^+$) to solve the system $W = YX^+$, where **$X$** is the feature matrix (stacking all $x^{\mu}$ as columns) and **$Y$** is the target matrix containing the one-hot encoded labels.
+We minimize this error by calculating the Moore-Penrose pseudoinverse ($X^+$) to solve the system $W = YX^+$, where $X$ is the feature matrix (stacking all $x^{\mu}$ as columns) and $Y$ is the target matrix containing the one-hot encoded labels.
 
 
 
