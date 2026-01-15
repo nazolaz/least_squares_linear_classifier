@@ -29,13 +29,13 @@ Solves for the pseudoinverse by decomposing a symmetric positive-definite matrix
 
 
 ### 2. SVD (Singular Value Decomposition)
-Finds the solution using the decomposition $X = U \Sigma V^T$. Here, **$U$** and **$V$** are orthogonal matrices representing the singular vectors, and **$\Sigma$** is a diagonal matrix containing the singular values. The weights are calculated as:
+Finds the solution using the decomposition $X = U \Sigma V^T$. Here, $U$ and $V$ are orthogonal matrices representing the singular vectors, and $\Sigma$ is a diagonal matrix containing the singular values. The weights are calculated as:
 $$W = YV \Sigma^+ U^T$$
 
 
 
 ### 3. QR Decomposition
-Calculates the decomposition of the transpose $X^T = QR$ using **Householder reflections**. In this method, **$Q$** is an orthogonal matrix and **$R$** is an upper triangular matrix. It solves the system $VR^T = Q$ (where $V = X^+$) to obtain the final weight matrix $W = YV$.
+Calculates the decomposition of the transpose $X^T = QR$ using Householder reflections. In this method, $Q$ is an orthogonal matrix and $R$ is an upper triangular matrix. It solves the system $VR^T = Q$ (where $V = X^+$) to obtain the final weight matrix $W = YV$.
 
 ## Performance Benchmarking (MNIST)
 
