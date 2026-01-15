@@ -4,7 +4,7 @@ This project implements a multi-class linear classifier based on algebraic decom
 
 ## Mathematical Objective
 
-The goal is to find the weight matrix $W \in \mathbb{R}^{m \times n}$ that minimizes the Mean squared error between our predictions ($Wx^{\mu}$) and the desired targets ($y^{\mu}$) across all $p$ training samples:
+The goal is to find the weight matrix $W \in \mathbb{R}^{m \times n}$ that minimizes the mean squared error between our predictions ($Wx^{\mu}$) and the desired targets ($y^{\mu}$) across all $p$ training samples:
 
 $$E(W) = \frac{1}{p} \sum_{\mu=1}^{p} \|y^{\mu} - Wx^{\mu}\|_2^2$$
 
